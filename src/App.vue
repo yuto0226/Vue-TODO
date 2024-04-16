@@ -1,29 +1,30 @@
 <script>
+import { onMounted, onUpdated, ref } from 'vue';
 import TodoCard from './components/TodoCard.vue';
 import TodoForm from './components/TodoForm.vue';
 
+import axios from 'axios';
+
+
 export default {
+  setup() {
+    const tasks = ref([]);
+    axios.get('http://localhost:5000/api/task/')
+      .then((res) => {
+        console.log(res.data);
+        tasks.value = res.data;
+      }).catch((error) => {
+        console.log(error);
+      });
+    return { tasks };
+  },
   components: {
     TodoCard,
     TodoForm,
   },
   data() {
     return {
-      tasks: [
-        {
-          title: "用 AXIOS 串接API",
-          content: "將任務改成若可以連接得到伺服端，則使用伺服端資料修改。"
-        },
-        {
-          title: "實作 Flask RESTful API",
-          content: "用 Flask 實作 CRUD"
-        },
-        {
-          title: "完成 Vue.js 前端頁面",
-          content: "基本 TODO LIST 頁面"
-        },
 
-      ],
     }
   },
   computed: {
@@ -32,9 +33,26 @@ export default {
   methods: {
     addTask(title, content) {
       const task = { title: title, content: content };
+      axios.post('http://localhost:5000/api/task/', {
+        title: title,
+        content: content
+      })
+        .then(function (response) {
+          console.log(response);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
       this.tasks.unshift(task);
     },
     deleteTask(index) {
+      axios.delete('http://localhost:5000/api/task/' + index + '/')
+        .then(function (response) {
+          console.log(response);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
       this.tasks.splice(index, 1);
     }
   }
