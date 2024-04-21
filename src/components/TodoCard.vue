@@ -1,6 +1,7 @@
 <script>
 export default {
     props: {
+        id: String,
         title: String,
         content: String,
     },
